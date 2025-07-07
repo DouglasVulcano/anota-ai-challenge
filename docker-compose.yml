@@ -7,13 +7,13 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: "${MONGO_ROOT_USERNAME:-root}"
       MONGO_INITDB_ROOT_PASSWORD: "${MONGO_ROOT_PASSWORD:-example}"
-      MONGO_INITDB_DATABASE: "${MONGO_DATABASE:-appdb}"
+      MONGO_INITDB_DATABASE: "${MONGO_DATABASE:-product-catalog}"
     ports:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -28,7 +28,7 @@ services:
         condition: service_healthy
     environment:
       - SPRING_PROFILES_ACTIVE=default
-      - SPRING_DATA_MONGODB_URI=mongodb://${MONGO_ROOT_USERNAME:-root}:${MONGO_ROOT_PASSWORD:-example}@mongo:27017/${MONGO_DATABASE:-appdb}?authSource=admin
+      - SPRING_DATA_MONGODB_URI=mongodb://${MONGO_ROOT_USERNAME:-root}:${MONGO_ROOT_PASSWORD:-example}@mongo:27017/${MONGO_DATABASE:-product-catalog}?authSource=admin
 
   mongo-express:
     image: mongo-express:latest
