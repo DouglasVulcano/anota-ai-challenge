@@ -1,11 +1,12 @@
 package br.com.vulcanodev.anota_ai_challenge.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import br.com.vulcanodev.anota_ai_challenge.dtos.CategoryDto;
-import br.com.vulcanodev.anota_ai_challenge.exceptions.category.CategoryNotFounException;
+import br.com.vulcanodev.anota_ai_challenge.exceptions.category.CategoryNotFoundException;
 import br.com.vulcanodev.anota_ai_challenge.domain.category.Category;
 import br.com.vulcanodev.anota_ai_challenge.repositories.CategoryRepository;
 
@@ -27,12 +28,12 @@ public class CategoryService {
         return this.categoryRepository.findAll();
     }
 
-    public Category findById(String id) {
-        return this.categoryRepository.findById(id).orElseThrow(CategoryNotFounException::new);
+    public Optional<Category> findById(String id) {
+        return this.categoryRepository.findById(id);
     }
 
     public Category update(String id, CategoryDto categoryData) {
-        Category categoryToUpdate = this.findById(id);
+        Category categoryToUpdate = this.findById(id).orElseThrow(CategoryNotFoundException::new);
 
         if (!categoryData.title().isEmpty()) 
             categoryToUpdate.setTitle(categoryData.title());
@@ -44,7 +45,7 @@ public class CategoryService {
     }
 
     public void delete(String id) {
-        Category categoryToDelete = this.findById(id);
+        Category categoryToDelete = this.findById(id).orElseThrow(CategoryNotFoundException::new);
         this.categoryRepository.delete(categoryToDelete);
     }
 }
