@@ -16,8 +16,8 @@ public class AwsSnsConfig {
     @Value("${aws.region}")
     private String region;
     
-    @Value("${aws.sns.topic-arn}")
-    private String topicArn;
+    @Value("${aws.sns.catalog-topic-arn}")
+    private String catalogEventsTopicArn;
     
     @Value("${aws.secret-access-key}")
     private String secretAccessKey;
@@ -34,8 +34,8 @@ public class AwsSnsConfig {
             .build();
     }
 
-    @Bean(name = "topicArn")
-    public Topic topicArn() {
-        return new Topic().withTopicArn(topicArn);
+    @Bean(name = "catalogEventsTopicArn")
+    public Topic snsCatalogTopicArn() {
+        return new Topic().withTopicArn(catalogEventsTopicArn);
     }
 }

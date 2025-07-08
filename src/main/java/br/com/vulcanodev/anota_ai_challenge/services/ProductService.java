@@ -11,16 +11,20 @@ import br.com.vulcanodev.anota_ai_challenge.exceptions.product.ProductNotFoundEx
 import br.com.vulcanodev.anota_ai_challenge.domain.category.Category;
 import br.com.vulcanodev.anota_ai_challenge.domain.product.Product;
 import br.com.vulcanodev.anota_ai_challenge.repositories.ProductRepository;
+import br.com.vulcanodev.anota_ai_challenge.services.aws.AwsSnsService;
 
 @Service
 public class ProductService {
 
-    private ProductRepository productRepository;
-    private CategoryService categoryService;
+    private final ProductRepository productRepository;
+    private final CategoryService categoryService;
+    private final AwsSnsService awsSnsService;
 
-    public ProductService(ProductRepository productRepository, CategoryService categoryService) {
+    public ProductService(ProductRepository productRepository, CategoryService categoryService,
+            AwsSnsService awsSnsService) {
         this.productRepository = productRepository;
         this.categoryService = categoryService;
+        this.awsSnsService = awsSnsService;
     }
 
     public Product insert(ProductDto productData) {
@@ -30,6 +34,7 @@ public class ProductService {
         Product newProduct = new Product(productData);
         newProduct.setCategory(category);
         this.productRepository.save(newProduct);
+        this.awsSnsService.publish(newProduct.getOwnerId());
         return newProduct;
 
     }
@@ -56,6 +61,8 @@ public class ProductService {
                     .ifPresent(category -> productToUpdate.setCategory(category));
 
         this.productRepository.save(productToUpdate);
+        this.awsSnsService.publish(productToUpdate.getOwnerId());
+
         return productToUpdate;
     }
 
