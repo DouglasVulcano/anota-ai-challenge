@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import br.com.vulcanodev.anota_ai_challenge.dtos.ProductDto;
 import br.com.vulcanodev.anota_ai_challenge.exceptions.category.CategoryNotFoundException;
 import br.com.vulcanodev.anota_ai_challenge.exceptions.product.ProductNotFoundException;
-import br.com.vulcanodev.anota_ai_challenge.domain.category.Category;
 import br.com.vulcanodev.anota_ai_challenge.domain.product.Product;
 import br.com.vulcanodev.anota_ai_challenge.repositories.ProductRepository;
 import br.com.vulcanodev.anota_ai_challenge.services.aws.AwsSnsService;
@@ -28,13 +27,12 @@ public class ProductService {
     }
 
     public Product insert(ProductDto productData) {
-        Category category = this.categoryService.findById(productData.categoryId())
+        this.categoryService.findById(productData.categoryId())
                 .orElseThrow(CategoryNotFoundException::new);
 
         Product newProduct = new Product(productData);
-        newProduct.setCategory(category);
         this.productRepository.save(newProduct);
-        this.awsSnsService.publish(newProduct.getOwnerId());
+        this.awsSnsService.publish(newProduct.toString());
         return newProduct;
 
     }
@@ -56,12 +54,12 @@ public class ProductService {
             productToUpdate.setDescription(productData.description());
         if (productData.price() != null)
             productToUpdate.setPrice(productData.price());
-        if (productData.categoryId() != null)
+        if (productData.categoryId() != null) 
             this.categoryService.findById(productData.categoryId())
-                    .ifPresent(category -> productToUpdate.setCategory(category));
+                    .ifPresent(category -> productToUpdate.setCategoryId(category.getId()));
 
         this.productRepository.save(productToUpdate);
-        this.awsSnsService.publish(productToUpdate.getOwnerId());
+        this.awsSnsService.publish(productToUpdate.toString());
 
         return productToUpdate;
     }

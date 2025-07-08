@@ -9,18 +9,23 @@ import br.com.vulcanodev.anota_ai_challenge.dtos.CategoryDto;
 import br.com.vulcanodev.anota_ai_challenge.exceptions.category.CategoryNotFoundException;
 import br.com.vulcanodev.anota_ai_challenge.domain.category.Category;
 import br.com.vulcanodev.anota_ai_challenge.repositories.CategoryRepository;
+import br.com.vulcanodev.anota_ai_challenge.services.aws.AwsSnsService;
 
 @Service
 public class CategoryService {
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
+    private final AwsSnsService awsSnsService;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository, AwsSnsService awsSnsService) {
         this.categoryRepository = categoryRepository;
+        this.awsSnsService = awsSnsService;
     }
 
     public Category insert(CategoryDto categoryData) {
         Category newCategory = new Category(categoryData);
         this.categoryRepository.save(newCategory);
+        this.awsSnsService.publish(newCategory.toString());
+
         return newCategory;
     }
 
@@ -35,12 +40,14 @@ public class CategoryService {
     public Category update(String id, CategoryDto categoryData) {
         Category categoryToUpdate = this.findById(id).orElseThrow(CategoryNotFoundException::new);
 
-        if (!categoryData.title().isEmpty()) 
+        if (!categoryData.title().isEmpty())
             categoryToUpdate.setTitle(categoryData.title());
-        if (!categoryData.description().isEmpty()) 
+        if (!categoryData.description().isEmpty())
             categoryToUpdate.setDescription(categoryData.description());
 
         this.categoryRepository.save(categoryToUpdate);
+        this.awsSnsService.publish(categoryToUpdate.toString());
+
         return categoryToUpdate;
     }
 

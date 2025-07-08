@@ -1,5 +1,6 @@
 package br.com.vulcanodev.anota_ai_challenge.domain.category;
 
+import org.json.JSONObject;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -23,5 +24,17 @@ public class Category {
         this.title = categoryData.title();
         this.description = categoryData.description();
         this.ownerId = categoryData.ownerId();
+    }
+
+    @Override
+    public String toString() {
+        JSONObject json = new JSONObject();
+        json.put("id", this.id);
+        json.put("title", this.title);
+        json.put("description", this.description);
+        json.put("ownerId", this.ownerId);
+        json.put("type", "category");
+
+        return json.toString();
     }
 }
