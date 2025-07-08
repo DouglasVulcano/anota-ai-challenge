@@ -29,6 +29,10 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=default
       - SPRING_DATA_MONGODB_URI=mongodb://${MONGO_ROOT_USERNAME:-root}:${MONGO_ROOT_PASSWORD:-example}@mongo:27017/${MONGO_DATABASE:-product-catalog}?authSource=admin
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+      - AWS_SNS_TOPIC_ARN=${AWS_SNS_TOPIC_ARN}
 
   mongo-express:
     image: mongo-express:latest
