@@ -4,7 +4,6 @@ import org.json.JSONObject;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import br.com.vulcanodev.anota_ai_challenge.domain.category.Category;
 import br.com.vulcanodev.anota_ai_challenge.dtos.ProductDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,7 +40,7 @@ public class Product {
         json.put("price", this.price);
         json.put("description", this.description);
         json.put("type", "product");
-        
+
         return json.toString();
     }
 }
